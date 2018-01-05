@@ -1,4 +1,4 @@
-# AesFileEncryption
+# AESFileEncryption
 C# application for encrypting/decrypting files using AES-256.
 
 ## Features
