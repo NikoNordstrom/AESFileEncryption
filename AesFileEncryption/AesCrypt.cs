@@ -21,7 +21,7 @@ namespace AesFileEncryption
         {
             try
             {
-                //UpdateLog("Tervehdys toisesta luokasta! :)"); // eii toimi :(
+                //UpdateLog("Tervehdys toisesta luokasta! :)"); // ei toimi :(
                 //return;
 
                 byte[] saltBytes = Generate256BitsOfRandom();
