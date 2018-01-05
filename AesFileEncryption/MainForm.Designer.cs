@@ -38,7 +38,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.encDecGb = new System.Windows.Forms.GroupBox();
             this.showBtn = new System.Windows.Forms.Button();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.deleteFile = new System.Windows.Forms.CheckBox();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -138,7 +138,7 @@
             // encDecGb
             // 
             this.encDecGb.Controls.Add(this.showBtn);
-            this.encDecGb.Controls.Add(this.checkBox1);
+            this.encDecGb.Controls.Add(this.deleteFile);
             this.encDecGb.Controls.Add(this.pwdTxt);
             this.encDecGb.Controls.Add(this.label2);
             this.encDecGb.Controls.Add(this.encBtn);
@@ -161,15 +161,15 @@
             this.showBtn.UseVisualStyleBackColor = true;
             this.showBtn.Click += new System.EventHandler(this.showBtn_Click);
             // 
-            // checkBox1
+            // deleteFile
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(76, 86);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(109, 17);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Delete original file";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.deleteFile.AutoSize = true;
+            this.deleteFile.Location = new System.Drawing.Point(76, 86);
+            this.deleteFile.Name = "deleteFile";
+            this.deleteFile.Size = new System.Drawing.Size(109, 17);
+            this.deleteFile.TabIndex = 7;
+            this.deleteFile.Text = "Delete original file";
+            this.deleteFile.UseVisualStyleBackColor = true;
             // 
             // menuStrip
             // 
@@ -193,7 +193,7 @@
             // resetAllToolStripMenuItem
             // 
             this.resetAllToolStripMenuItem.Name = "resetAllToolStripMenuItem";
-            this.resetAllToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.resetAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.resetAllToolStripMenuItem.Text = "Reset all";
             this.resetAllToolStripMenuItem.Click += new System.EventHandler(this.resetAllToolStripMenuItem_Click);
             // 
@@ -286,7 +286,7 @@
         private System.Windows.Forms.Label percentLabel;
         private System.Windows.Forms.ToolStripMenuItem resetAllToolStripMenuItem;
         private System.ComponentModel.BackgroundWorker bgWorker;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox deleteFile;
         private System.Windows.Forms.Button showBtn;
     }
 }

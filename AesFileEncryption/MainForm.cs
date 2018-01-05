@@ -166,15 +166,30 @@ namespace AesFileEncryption
         {
             if ((int)e.Argument == 0)
             {
-                AesCrypt.Encrypt(path, pwd, sender as BackgroundWorker);
-                e.Result = 0;
+                if (deleteFile.Checked == false)
+                {
+                    AesCrypt.Encrypt(path, pwd, true, sender as BackgroundWorker);
+                    e.Result = 0;
+                }
+                else if (deleteFile.Checked == true)
+                {
+                    AesCrypt.Encrypt(path, pwd, false, sender as BackgroundWorker);
+                    e.Result = 0;
+                }
             }
             else if ((int)e.Argument == 1)
             {
-                AesCrypt.Decrypt(path, pwd, sender as BackgroundWorker);
-                e.Result = 1;
+                if (deleteFile.Checked == false)
+                {
+                    AesCrypt.Decrypt(path, pwd, true, sender as BackgroundWorker);
+                    e.Result = 1;
+                }
+                else if (deleteFile.Checked == true)
+                {
+                    AesCrypt.Decrypt(path, pwd, false, sender as BackgroundWorker);
+                    e.Result = 1;
+                }
             }
-
         }
 
         private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -190,12 +205,12 @@ namespace AesFileEncryption
                 if ((int)e.Result == 0)
                 {
                     string fileName = new FileInfo(path).Name;
-                    log.AppendText(string.Format("Successfully encrypted file {0}!\n", fileName));
+                    log.AppendText(string.Format("Successfully encrypted file '{0}'!\n", fileName));
                 }
                 else if ((int)e.Result == 1)
                 {
                     string fileName = new FileInfo(path).Name;
-                    log.AppendText(string.Format("Successfully decrypted file {0}!\n", fileName));
+                    log.AppendText(string.Format("Successfully decrypted file '{0}'!\n", fileName));
                 }
 
                 SystemSounds.Asterisk.Play();

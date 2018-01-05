@@ -12,17 +12,25 @@ namespace AesFileEncryption
 {
     class AesCrypt
     {
-        private static MainForm mf = null;
+        //private static MainForm mf = null;
 
         private const int keysize = 256;
         private const int iterations = 4096;
 
-        public static void Encrypt(string path, string password, BackgroundWorker bgw)
+        public static void Encrypt(string path, string password, bool keepFile, BackgroundWorker bgw = null)
         {
             try
             {
                 //UpdateLog("Tervehdys toisesta luokasta! :)"); // ei toimi :(
                 //return;
+
+                File.Move(path, path + ".encrypted");
+                path = path + ".encrypted";
+
+                if (keepFile == true && !File.Exists(path.Replace(".encrypted", "")))
+                {
+                    File.Copy(path, path.Replace(".encrypted", ""));
+                }
 
                 byte[] saltBytes = Generate256BitsOfRandom();
                 byte[] ivBytes = Generate256BitsOfRandom();
@@ -102,8 +110,6 @@ namespace AesFileEncryption
                                 appendStream.Close();
                             }
 
-                            File.Move(path, path + ".encrypted");
-
                             if (progressInt != 100 && bgw != null)
                             {
                                 bgw.ReportProgress(100);
@@ -118,7 +124,7 @@ namespace AesFileEncryption
             }
         }
 
-        public static void Decrypt(string path, string password, BackgroundWorker bgw)
+        public static void Decrypt(string path, string password, bool keepFile,BackgroundWorker bgw = null)
         {
             try
             {
@@ -154,7 +160,7 @@ namespace AesFileEncryption
 
                     if (!Enumerable.SequenceEqual(hashKeyBytes, hashKeyBytes2))
                     {
-                        MessageBox.Show("Password is incorrect!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("File is corrupted or password is incorrect!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
@@ -237,10 +243,18 @@ namespace AesFileEncryption
 
                             using (FileStream appendStream = new FileStream(path, FileMode.Append, FileAccess.Write))
                             {
+                                appendStream.Write(saltBytes, 0, saltBytes.Length);
+                                appendStream.Write(ivBytes, 0, ivBytes.Length);
+
                                 appendStream.Write(hashKeyBytes2, 0, hashKeyBytes2.Length);
                                 appendStream.Write(hmacBytes2, 0, hmacBytes2.Length);
 
                                 appendStream.Close();
+                            }
+
+                            if (keepFile == false && File.Exists(path))
+                            {
+                                File.Delete(path);
                             }
 
                             if (bgw != null)
@@ -274,13 +288,13 @@ namespace AesFileEncryption
             return randomBytes;
         }
 
-        private static void UpdateLog(string text)
-        {
-            if (mf == null)
-            {
-                mf = new MainForm();
-            }
-            mf.LogAppend(text);
-        }
+        //private static void UpdateLog(string text)
+        //{
+        //    if (mf == null)
+        //    {
+        //        mf = new MainForm();
+        //    }
+        //    mf.LogAppend(text);
+        //}
     }
 }
