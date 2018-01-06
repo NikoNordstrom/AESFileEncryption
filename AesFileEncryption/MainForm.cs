@@ -96,6 +96,7 @@ namespace AesFileEncryption
                 string fileName = new FileInfo(path).Name;
                 LogAppend(string.Format("Encrypting file {0}...", fileName));
 
+                Gui(false);
                 bgWorker.RunWorkerAsync(0);
             }
         }
@@ -109,6 +110,7 @@ namespace AesFileEncryption
                 string fileName = new FileInfo(path).Name;
                 LogAppend(string.Format("Decrypting file {0}...", fileName));
 
+                Gui(false);
                 bgWorker.RunWorkerAsync(1);
             }
         }
@@ -126,6 +128,28 @@ namespace AesFileEncryption
         public void LogAppend(string text)
         {
             log.AppendText(text + "\n");
+        }
+
+        private void Gui(bool enabled)
+        {
+            if (enabled == true)
+            {
+                encDecGb.Enabled = true;
+                pathTxt.Enabled = true;
+                browseBtn.Enabled = true;
+                IsFolder.Enabled = true;
+                pathLabel.Enabled = true;
+                menuStrip.Enabled = true;
+            }
+            else if (enabled == false)
+            {
+                encDecGb.Enabled = false;
+                pathTxt.Enabled = false;
+                browseBtn.Enabled = false;
+                IsFolder.Enabled = false;
+                pathLabel.Enabled = false;
+                menuStrip.Enabled = false;
+            }
         }
 
         private void pwdTxt_TextChanged(object sender, EventArgs e)
@@ -169,26 +193,26 @@ namespace AesFileEncryption
                 if (deleteFile.Checked == false)
                 {
                     AesCrypt.Encrypt(path, pwd, true, sender as BackgroundWorker);
-                    e.Result = 0;
                 }
                 else if (deleteFile.Checked == true)
                 {
                     AesCrypt.Encrypt(path, pwd, false, sender as BackgroundWorker);
-                    e.Result = 0;
                 }
+
+                e.Result = 0;
             }
             else if ((int)e.Argument == 1)
             {
                 if (deleteFile.Checked == false)
                 {
                     AesCrypt.Decrypt(path, pwd, true, sender as BackgroundWorker);
-                    e.Result = 1;
                 }
                 else if (deleteFile.Checked == true)
                 {
                     AesCrypt.Decrypt(path, pwd, false, sender as BackgroundWorker);
-                    e.Result = 1;
                 }
+
+                e.Result = 1;
             }
         }
 
@@ -205,18 +229,20 @@ namespace AesFileEncryption
                 if ((int)e.Result == 0)
                 {
                     string fileName = new FileInfo(path).Name;
-                    log.AppendText(string.Format("Successfully encrypted file '{0}'!\n", fileName));
+                    log.AppendText(string.Format("Successfully encrypted file {0}!\n", fileName));
                 }
                 else if ((int)e.Result == 1)
                 {
                     string fileName = new FileInfo(path).Name;
-                    log.AppendText(string.Format("Successfully decrypted file '{0}'!\n", fileName));
+                    log.AppendText(string.Format("Successfully decrypted file {0}!\n", fileName));
                 }
 
+                Gui(true);
                 SystemSounds.Asterisk.Play();
             }
             else if (e.Error != null)
             {
+                Gui(true);
                 log.AppendText(e.Error.Message + "\n");
             }
         }
