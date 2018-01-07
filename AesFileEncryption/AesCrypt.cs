@@ -12,18 +12,13 @@ namespace AesFileEncryption
 {
     class AesCrypt
     {
-        //private static MainForm mf = null;
-
         private const int keysize = 256;
-        private const int iterations = 4096;
+        private const int iterations = 10000;
 
         public static void Encrypt(string path, string password, bool keepFile, BackgroundWorker bgw = null)
         {
             try
             {
-                //UpdateLog("Tervehdys toisesta luokasta! :)"); // ei toimi :(
-                //return;
-
                 File.Move(path, path + ".encrypted");
                 path = path + ".encrypted";
 
@@ -287,14 +282,5 @@ namespace AesFileEncryption
             }
             return randomBytes;
         }
-
-        //private static void UpdateLog(string text)
-        //{
-        //    if (mf == null)
-        //    {
-        //        mf = new MainForm();
-        //    }
-        //    mf.LogAppend(text);
-        //}
     }
 }
