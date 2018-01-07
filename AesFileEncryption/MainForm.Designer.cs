@@ -47,7 +47,7 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.percentLabel = new System.Windows.Forms.Label();
             this.bgWorker = new System.ComponentModel.BackgroundWorker();
-            this.fileCountLabel = new System.Windows.Forms.Label();
+            this.fileProgress = new System.Windows.Forms.Label();
             this.encDecGb.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -235,14 +235,14 @@
             this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgWorker_ProgressChanged);
             this.bgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgWorker_RunWorkerCompleted);
             // 
-            // fileCountLabel
+            // fileProgress
             // 
-            this.fileCountLabel.AutoSize = true;
-            this.fileCountLabel.Location = new System.Drawing.Point(529, 382);
-            this.fileCountLabel.Name = "fileCountLabel";
-            this.fileCountLabel.Size = new System.Drawing.Size(30, 13);
-            this.fileCountLabel.TabIndex = 12;
-            this.fileCountLabel.Text = "0 / 0";
+            this.fileProgress.AutoSize = true;
+            this.fileProgress.Location = new System.Drawing.Point(529, 382);
+            this.fileProgress.Name = "fileProgress";
+            this.fileProgress.Size = new System.Drawing.Size(30, 13);
+            this.fileProgress.TabIndex = 12;
+            this.fileProgress.Text = "0 / 0";
             // 
             // MainForm
             // 
@@ -250,7 +250,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(584, 411);
-            this.Controls.Add(this.fileCountLabel);
+            this.Controls.Add(this.fileProgress);
             this.Controls.Add(this.percentLabel);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.IsFolder);
@@ -297,7 +297,7 @@
         private System.ComponentModel.BackgroundWorker bgWorker;
         private System.Windows.Forms.CheckBox deleteFile;
         private System.Windows.Forms.Button showBtn;
-        private System.Windows.Forms.Label fileCountLabel;
+        private System.Windows.Forms.Label fileProgress;
     }
 }
 

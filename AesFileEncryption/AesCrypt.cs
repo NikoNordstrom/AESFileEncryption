@@ -124,7 +124,7 @@ namespace AesFileEncryption
             }
         }
 
-        public static void Decrypt(string path, string password, bool keepFile,BackgroundWorker bgw = null)
+        public static void Decrypt(string path, string password, bool keepFile, BackgroundWorker bgw = null)
         {
             try
             {
