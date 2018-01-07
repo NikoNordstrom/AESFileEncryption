@@ -47,6 +47,7 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.percentLabel = new System.Windows.Forms.Label();
             this.bgWorker = new System.ComponentModel.BackgroundWorker();
+            this.fileCountLabel = new System.Windows.Forms.Label();
             this.encDecGb.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -95,7 +96,6 @@
             // encBtn
             // 
             this.encBtn.BackColor = System.Drawing.SystemColors.Control;
-            this.encBtn.Enabled = false;
             this.encBtn.Location = new System.Drawing.Point(191, 76);
             this.encBtn.Name = "encBtn";
             this.encBtn.Size = new System.Drawing.Size(80, 35);
@@ -107,7 +107,6 @@
             // decBtn
             // 
             this.decBtn.BackColor = System.Drawing.SystemColors.Control;
-            this.decBtn.Enabled = false;
             this.decBtn.Location = new System.Drawing.Point(277, 76);
             this.decBtn.Name = "decBtn";
             this.decBtn.Size = new System.Drawing.Size(80, 35);
@@ -193,7 +192,7 @@
             // resetAllToolStripMenuItem
             // 
             this.resetAllToolStripMenuItem.Name = "resetAllToolStripMenuItem";
-            this.resetAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.resetAllToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.resetAllToolStripMenuItem.Text = "Reset all";
             this.resetAllToolStripMenuItem.Click += new System.EventHandler(this.resetAllToolStripMenuItem_Click);
             // 
@@ -236,12 +235,22 @@
             this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgWorker_ProgressChanged);
             this.bgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgWorker_RunWorkerCompleted);
             // 
+            // fileCountLabel
+            // 
+            this.fileCountLabel.AutoSize = true;
+            this.fileCountLabel.Location = new System.Drawing.Point(529, 382);
+            this.fileCountLabel.Name = "fileCountLabel";
+            this.fileCountLabel.Size = new System.Drawing.Size(30, 13);
+            this.fileCountLabel.TabIndex = 12;
+            this.fileCountLabel.Text = "0 / 0";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(584, 411);
+            this.Controls.Add(this.fileCountLabel);
             this.Controls.Add(this.percentLabel);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.IsFolder);
@@ -288,6 +297,7 @@
         private System.ComponentModel.BackgroundWorker bgWorker;
         private System.Windows.Forms.CheckBox deleteFile;
         private System.Windows.Forms.Button showBtn;
+        private System.Windows.Forms.Label fileCountLabel;
     }
 }
 

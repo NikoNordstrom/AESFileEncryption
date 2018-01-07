@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Media;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace AesFileEncryption
 {
@@ -17,6 +18,7 @@ namespace AesFileEncryption
     {
         private string path;
         private string pwd;
+        private bool IsDirectory;
 
         public MainForm()
         {
@@ -40,7 +42,13 @@ namespace AesFileEncryption
                     {
                         path = fbd.SelectedPath;
                         pathTxt.Text = path;
+                        IsDirectory = true;
                         encDecGb.Enabled = true;
+                        encBtn.Enabled = true;
+                        decBtn.Enabled = true;
+
+                        int filesCount = Directory.GetFiles(path).Count();
+                        fileCountLabel.Text = "0 / " + filesCount.ToString();
 
                         log.Clear();
                         log.AppendText(string.Format("Folder \"{0}\" is now selected.\n", path));
@@ -62,7 +70,9 @@ namespace AesFileEncryption
                     {
                         path = ofd.FileName;
                         pathTxt.Text = path;
+                        IsDirectory = false;
                         encDecGb.Enabled = true;
+                        fileCountLabel.Text = "0 / 1";
 
                         if (path.Contains(".encrypted"))
                         {
@@ -90,39 +100,123 @@ namespace AesFileEncryption
         private void encBtn_Click(object sender, EventArgs e)
         {
             pwd = pwdTxt.Text;
+            path = pathTxt.Text;
 
-            if (!string.IsNullOrEmpty(pwd) && !string.IsNullOrEmpty(path))
+            string[] args = new string[2];
+            args[0] = path;
+            args[1] = "encrypt";
+
+            if (!string.IsNullOrEmpty(pwd) && !string.IsNullOrEmpty(path) && IsDirectory == false)
             {
                 string fileName = new FileInfo(path).Name;
                 LogAppend(string.Format("Encrypting file {0}...", fileName));
 
+                fileCountLabel.Text = "0 / 1";
+
                 Gui(false);
-                bgWorker.RunWorkerAsync(0);
+                bgWorker.RunWorkerAsync(args);
+            }
+            else if (!string.IsNullOrEmpty(pwd) && !string.IsNullOrEmpty(path) && IsDirectory == true)
+            {
+                EncryptFolder();
             }
         }
 
         private void decBtn_Click(object sender, EventArgs e)
         {
             pwd = pwdTxt.Text;
+            path = pathTxt.Text;
 
-            if (!string.IsNullOrEmpty(pwd) && !string.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(pwd) && !string.IsNullOrEmpty(path) && IsDirectory == false)
             {
                 string fileName = new FileInfo(path).Name;
                 LogAppend(string.Format("Decrypting file {0}...", fileName));
 
+                string[] args = new string[2];
+                args[0] = path;
+                args[1] = "decrypt";
+
+                fileCountLabel.Text = "0 / 1";
+
                 Gui(false);
-                bgWorker.RunWorkerAsync(1);
+                bgWorker.RunWorkerAsync(args);
+            }
+            else if (!string.IsNullOrEmpty(pwd) && !string.IsNullOrEmpty(path) && IsDirectory == true)
+            {
+                DecryptFolder();
             }
         }
 
         private void EncryptFolder()
         {
-            
+            string[] allFiles = Directory.GetFiles(path);
+            fileCountLabel.Text = "0 / " + allFiles.Count().ToString();
+
+            foreach (string file in allFiles)
+            {
+                string[] args = new string[2];
+                args[0] = file;
+                args[1] = "encrypt";
+
+                string fileName = new FileInfo(file).Name;
+                LogAppend(string.Format("Encrypting file {0}...", fileName));
+
+                if (bgWorker.IsBusy)
+                {
+                    while (bgWorker.IsBusy)
+                    {
+                        Application.DoEvents();
+                        Thread.Sleep(100);
+
+                        if (bgWorker.IsBusy == false)
+                        {
+                            bgWorker.RunWorkerAsync(args);
+                            break;
+                        }
+                    }
+                }
+                else if (bgWorker.IsBusy == false)
+                {
+                    bgWorker.RunWorkerAsync(args);
+                }
+            }
         }
 
         private void DecryptFolder()
         {
+            string[] allFiles = Directory.GetFiles(path);
+            fileCountLabel.Text = "0 / " + allFiles.Count().ToString();
 
+            foreach (string file in allFiles)
+            {
+                string[] args = new string[2];
+                args[0] = file;
+                args[1] = "decrypt";
+
+                string ext = new FileInfo(file).Extension;
+
+                string fileName = new FileInfo(file).Name;
+                LogAppend(string.Format("Decrypting file {0}...", fileName));
+
+                if (bgWorker.IsBusy)
+                {
+                    while (bgWorker.IsBusy)
+                    {
+                        Application.DoEvents();
+                        Thread.Sleep(100);
+
+                        if (bgWorker.IsBusy == false)
+                        {
+                            bgWorker.RunWorkerAsync(args);
+                            break;
+                        }
+                    }
+                }
+                else if (bgWorker.IsBusy == false)
+                {
+                    bgWorker.RunWorkerAsync(args);
+                }
+            }
         }
 
         public void LogAppend(string text)
@@ -180,6 +274,7 @@ namespace AesFileEncryption
             encDecGb.Enabled = false;
             IsFolder.Checked = false;
             percentLabel.Text = "0 %";
+            fileCountLabel.Text = "0 / 0";
             progressBar.Value = 0;
 
             log.Clear();
@@ -188,31 +283,35 @@ namespace AesFileEncryption
 
         private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            if ((int)e.Argument == 0)
+            string[] args = (string[])e.Argument;
+            string filePath = args[0];
+            string mode = args[1];
+
+            if (mode == "encrypt")
             {
                 if (deleteFile.Checked == false)
                 {
-                    AesCrypt.Encrypt(path, pwd, true, sender as BackgroundWorker);
+                    AesCrypt.Encrypt(filePath, pwd, true, sender as BackgroundWorker);
                 }
                 else if (deleteFile.Checked == true)
                 {
-                    AesCrypt.Encrypt(path, pwd, false, sender as BackgroundWorker);
+                    AesCrypt.Encrypt(filePath, pwd, false, sender as BackgroundWorker);
                 }
 
-                e.Result = 0;
+                e.Result = "encrypted";
             }
-            else if ((int)e.Argument == 1)
+            else if (mode == "decrypt")
             {
                 if (deleteFile.Checked == false)
                 {
-                    AesCrypt.Decrypt(path, pwd, true, sender as BackgroundWorker);
+                    AesCrypt.Decrypt(filePath, pwd, true, sender as BackgroundWorker);
                 }
                 else if (deleteFile.Checked == true)
                 {
-                    AesCrypt.Decrypt(path, pwd, false, sender as BackgroundWorker);
+                    AesCrypt.Decrypt(filePath, pwd, false, sender as BackgroundWorker);
                 }
 
-                e.Result = 1;
+                e.Result = "decrypted";
             }
         }
 
@@ -220,18 +319,29 @@ namespace AesFileEncryption
         {
             progressBar.Value = e.ProgressPercentage;
             percentLabel.Text = progressBar.Value.ToString() + " %";
+
+            if (progressBar.Value == 100)
+            {
+                MatchCollection matches = Regex.Matches(fileCountLabel.Text, @"\d+");
+                int files = int.Parse(matches[1].ToString());
+
+                int fileCount = int.Parse(matches[0].ToString());
+                fileCount++;
+
+                fileCountLabel.Text = string.Format("{0} / {1}", fileCount.ToString(), files.ToString());
+            }
         }
 
         private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error == null && progressBar.Value == 100)
             {
-                if ((int)e.Result == 0)
+                if ((string)e.Result == "encrypted")
                 {
                     string fileName = new FileInfo(path).Name;
                     log.AppendText(string.Format("Successfully encrypted file {0}!\n", fileName));
                 }
-                else if ((int)e.Result == 1)
+                else if ((string)e.Result == "decrypted")
                 {
                     string fileName = new FileInfo(path).Name;
                     log.AppendText(string.Format("Successfully decrypted file {0}!\n", fileName));
@@ -243,7 +353,7 @@ namespace AesFileEncryption
             else if (e.Error != null)
             {
                 Gui(true);
-                log.AppendText(e.Error.Message + "\n");
+                LogAppend(e.Error.Message);
             }
         }
 
