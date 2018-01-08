@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Media;
-using System.Threading;
 using System.Text.RegularExpressions;
 
 namespace AesFileEncryption
@@ -27,7 +21,7 @@ namespace AesFileEncryption
         
         private void MainForm_Load(object sender, EventArgs e)
         {
-            log.AppendText("Select path to the file or folder.\n");
+            LogAppend("Select path to the file or folder.");
         }
 
         private void browseBtn_Click(object sender, EventArgs e)
@@ -51,16 +45,16 @@ namespace AesFileEncryption
                         fileProgress.Text = "0 / " + filesCount.ToString();
 
                         log.Clear();
-                        log.AppendText(string.Format("Folder \"{0}\" is now selected.\n", path));
-                        log.AppendText("Now enter a password. That password will be used to encrypt/decrypt all the files in the folder.\n");
+                        LogAppend(string.Format("Folder \"{0}\" is now selected.", path));
+                        LogAppend("Now enter a password. That password will be used to encrypt/decrypt all files in the folder.");
                     }
                     else if (result == DialogResult.OK && !Directory.Exists(fbd.SelectedPath))
                     {
-                        log.AppendText("Selected folder doesn't exist!\n");
+                        LogAppend("Selected folder doesn't exist!");
                     }
                 } 
             }
-            else
+            else if (!IsFolder.Checked)
             {
                 using (OpenFileDialog ofd = new OpenFileDialog())
                 {
@@ -79,19 +73,19 @@ namespace AesFileEncryption
                             decBtn.Enabled = true;
                             encBtn.Enabled = false;
                         }
-                        else
+                        else if (!path.Contains(".encrypted"))
                         {
                             decBtn.Enabled = false;
                             encBtn.Enabled = true;
                         }
 
                         log.Clear();
-                        log.AppendText(string.Format("File \"{0}\" is now selected.\n", path));
-                        log.AppendText("Now enter a password. That password will be used to encrypt/decrypt the selected file.\n");
+                        LogAppend(string.Format("File \"{0}\" is now selected.", path));
+                        LogAppend("Now enter a password. That password will be used to encrypt/decrypt the selected file.");
                     }
                     else if (result == DialogResult.OK && !File.Exists(ofd.FileName))
                     {
-                        log.AppendText("Selected file doesn't exist!\n");
+                        LogAppend("Selected file doesn't exist!");
                     }
                 }
             }
