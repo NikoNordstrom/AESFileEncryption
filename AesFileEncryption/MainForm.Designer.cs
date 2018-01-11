@@ -123,7 +123,6 @@
             this.pwdTxt.PasswordChar = '•';
             this.pwdTxt.Size = new System.Drawing.Size(222, 26);
             this.pwdTxt.TabIndex = 5;
-            this.pwdTxt.TextChanged += new System.EventHandler(this.pwdTxt_TextChanged);
             // 
             // label2
             // 

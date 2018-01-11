@@ -38,8 +38,6 @@ namespace AesFileEncryption
                         pathTxt.Text = path;
                         IsDirectory = true;
                         encDecGb.Enabled = true;
-                        encBtn.Enabled = true;
-                        decBtn.Enabled = true;
 
                         int filesCount = Directory.GetFiles(path).Count();
                         fileProgress.Text = "0 / " + filesCount.ToString();
@@ -67,17 +65,6 @@ namespace AesFileEncryption
                         IsDirectory = false;
                         encDecGb.Enabled = true;
                         fileProgress.Text = "0 / 1";
-
-                        if (path.Contains(".encrypted"))
-                        {
-                            decBtn.Enabled = true;
-                            encBtn.Enabled = false;
-                        }
-                        else if (!path.Contains(".encrypted"))
-                        {
-                            decBtn.Enabled = false;
-                            encBtn.Enabled = true;
-                        }
 
                         log.Clear();
                         LogAppend(string.Format("File \"{0}\" is now selected.", path));
@@ -108,6 +95,12 @@ namespace AesFileEncryption
                     return;
                 }
 
+                if (path.Contains(".encrypted"))
+                {
+                    LogAppend("File is already encrypted.");
+                    return;
+                }
+
                 string fileName = new FileInfo(path).Name;
                 LogAppend(string.Format("Encrypting file {0}...", fileName));
 
@@ -132,6 +125,12 @@ namespace AesFileEncryption
                 if (!File.Exists(path))
                 {
                     LogAppend("File was not found.");
+                    return;
+                }
+
+                if (!path.Contains(".encrypted"))
+                {
+                    LogAppend("File is already decrypted.");
                     return;
                 }
 
@@ -282,24 +281,6 @@ namespace AesFileEncryption
             IsFolder.Enabled = enabled;
             pathLabel.Enabled = enabled;
             menuStrip.Enabled = enabled;
-        }
-
-        private void pwdTxt_TextChanged(object sender, EventArgs e)
-        {
-            if (pwdTxt.Text != string.Empty && !path.Contains(".encrypted"))
-            {
-                encBtn.Enabled = true;
-            }
-            else if (pwdTxt.Text != string.Empty && path.Contains(".encrypted"))
-            {
-                encBtn.Enabled = false;
-                decBtn.Enabled = true;
-            }
-            else
-            {
-                encBtn.Enabled = false;
-                decBtn.Enabled = false;
-            }
         }
 
         private void resetAllToolStripMenuItem_Click(object sender, EventArgs e)
