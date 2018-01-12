@@ -194,7 +194,7 @@ namespace AesFileEncryption
                             appendStream.Close();
                         }
 
-                        MessageBox.Show("File is corrupted or it has been altered!", "HMAC does not match!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("File is corrupted or it has been altered!", "Checksums does not match!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
