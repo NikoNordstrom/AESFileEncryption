@@ -259,6 +259,7 @@
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.pathTxt);
             this.Controls.Add(this.menuStrip);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip;
             this.MaximizeBox = false;
             this.Name = "MainForm";
