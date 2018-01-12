@@ -408,10 +408,6 @@ namespace AesFileEncryption
             string filePath = results[0];
             string mode = results[1];
 
-            if (e.Error == null && progressBar.Value == 100 && completedFiles == allFilesInt)
-            {
-                Gui(true);
-            }
             if (e.Error == null && progressBar.Value == 100)
             {
                 string fileName = new FileInfo(filePath).Name;
@@ -419,8 +415,14 @@ namespace AesFileEncryption
 
                 if (completedFiles == allFilesInt)
                 {
+                    Gui(true);
                     SystemSounds.Asterisk.Play();
                 }
+            }
+            else if (e.Error == null && progressBar.Value == 0)
+            {
+                LogAppend("File is corrupted or password is incorrect!");
+                Gui(true);
             }
             else if (e.Error != null)
             {
