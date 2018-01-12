@@ -184,6 +184,7 @@ namespace AesFileEncryption
 
             string[] allFiles = Directory.GetFiles(path);
 
+            // Count all unencrypted files in the folder
             for (int i = 0; i < allFiles.Count(); i++)
             {
                 string fileExt = new FileInfo(allFiles[i]).Extension;
@@ -256,6 +257,7 @@ namespace AesFileEncryption
 
             string[] allFiles = Directory.GetFiles(path);
 
+            // Count all encrypted files in the folder
             for (int i = 0; i < allFiles.Count(); i++)
             {
                 string fileExt = new FileInfo(allFiles[i]).Extension;
@@ -344,6 +346,7 @@ namespace AesFileEncryption
 
             encDecGb.Enabled = false;
             IsFolder.Checked = false;
+            deleteFile.Checked = false;
 
             percentLabel.Text = "0 %";
             progressBar.Value = 0;
@@ -372,8 +375,6 @@ namespace AesFileEncryption
                 {
                     AesCrypt.Encrypt(filePath, pwd, false, sender as BackgroundWorker);
                 }
-
-                e.Result = args;
             }
             else if (mode == "decrypt")
             {
@@ -385,9 +386,9 @@ namespace AesFileEncryption
                 {
                     AesCrypt.Decrypt(filePath, pwd, false, sender as BackgroundWorker);
                 }
-
-                e.Result = args;
             }
+
+            e.Result = args;
         }
 
         private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
