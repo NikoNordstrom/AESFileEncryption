@@ -42,12 +42,12 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.IsFolder = new System.Windows.Forms.CheckBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.percentLabel = new System.Windows.Forms.Label();
             this.bgWorker = new System.ComponentModel.BackgroundWorker();
             this.fileProgress = new System.Windows.Forms.Label();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.encDecGb.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -195,12 +195,6 @@
             this.resetAllToolStripMenuItem.Text = "Reset all";
             this.resetAllToolStripMenuItem.Click += new System.EventHandler(this.resetAllToolStripMenuItem_Click);
             // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
-            this.aboutToolStripMenuItem.Text = "About";
-            // 
             // IsFolder
             // 
             this.IsFolder.AutoSize = true;
@@ -242,6 +236,12 @@
             this.fileProgress.Size = new System.Drawing.Size(30, 13);
             this.fileProgress.TabIndex = 12;
             this.fileProgress.Text = "0 / 0";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.aboutToolStripMenuItem.Text = "About";
             // 
             // MainForm
             // 
@@ -288,7 +288,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox encDecGb;
         private System.Windows.Forms.MenuStrip menuStrip;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.CheckBox IsFolder;
         private System.Windows.Forms.ProgressBar progressBar;
@@ -298,6 +297,7 @@
         private System.Windows.Forms.CheckBox deleteFile;
         private System.Windows.Forms.Button showBtn;
         private System.Windows.Forms.Label fileProgress;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 
