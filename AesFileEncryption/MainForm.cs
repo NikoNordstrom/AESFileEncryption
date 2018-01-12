@@ -14,6 +14,9 @@ namespace AesFileEncryption
         private string pwd;
         private bool IsDirectory;
 
+        private int completedFiles = 0;
+        private int allFilesInt = 0;
+
         public MainForm()
         {
             InitializeComponent();
@@ -39,8 +42,12 @@ namespace AesFileEncryption
                         IsDirectory = true;
                         encDecGb.Enabled = true;
 
-                        int filesCount = Directory.GetFiles(path).Count();
-                        fileProgress.Text = "0 / " + filesCount.ToString();
+                        progressBar.Value = 0;
+                        percentLabel.Text = progressBar.Value.ToString() + " %";
+
+                        completedFiles = 0;
+                        allFilesInt = 0;
+                        fileProgress.Text = string.Format("{0} / {1}", completedFiles, allFilesInt);
 
                         log.Clear();
                         LogAppend(string.Format("Folder \"{0}\" is now selected.", path));
@@ -64,7 +71,13 @@ namespace AesFileEncryption
                         pathTxt.Text = path;
                         IsDirectory = false;
                         encDecGb.Enabled = true;
-                        fileProgress.Text = "0 / 1";
+
+                        progressBar.Value = 0;
+                        percentLabel.Text = progressBar.Value.ToString() + " %";
+
+                        completedFiles = 0;
+                        allFilesInt = 1;
+                        fileProgress.Text = string.Format("{0} / {1}", completedFiles, allFilesInt);
 
                         log.Clear();
                         LogAppend(string.Format("File \"{0}\" is now selected.", path));
@@ -82,6 +95,9 @@ namespace AesFileEncryption
         {
             pwd = pwdTxt.Text;
             path = pathTxt.Text;
+
+            progressBar.Value = 0;
+            percentLabel.Text = progressBar.Value.ToString() + " %";
 
             string[] args = new string[2];
             args[0] = path;
@@ -104,7 +120,9 @@ namespace AesFileEncryption
                 string fileName = new FileInfo(path).Name;
                 LogAppend(string.Format("Encrypting file {0}...", fileName));
 
-                fileProgress.Text = "0 / 1";
+                completedFiles = 0;
+                allFilesInt = 1;
+                fileProgress.Text = string.Format("{0} / {1}", completedFiles, allFilesInt);
 
                 Gui(false);
                 bgWorker.RunWorkerAsync(args);
@@ -119,6 +137,13 @@ namespace AesFileEncryption
         {
             pwd = pwdTxt.Text;
             path = pathTxt.Text;
+
+            progressBar.Value = 0;
+            percentLabel.Text = progressBar.Value.ToString() + " %";
+
+            string[] args = new string[2];
+            args[0] = path;
+            args[1] = "decrypt";
 
             if (!string.IsNullOrEmpty(pwd) && !string.IsNullOrEmpty(path) && IsDirectory == false)
             {
@@ -137,11 +162,9 @@ namespace AesFileEncryption
                 string fileName = new FileInfo(path).Name;
                 LogAppend(string.Format("Decrypting file {0}...", fileName));
 
-                string[] args = new string[2];
-                args[0] = path;
-                args[1] = "decrypt";
-
-                fileProgress.Text = "0 / 1";
+                completedFiles = 0;
+                allFilesInt = 1;
+                fileProgress.Text = string.Format("{0} / {1}", completedFiles, allFilesInt);
 
                 Gui(false);
                 bgWorker.RunWorkerAsync(args);
@@ -156,10 +179,24 @@ namespace AesFileEncryption
         {
             Gui(false);
 
-            string[] allFiles = Directory.GetFiles(path);
-            fileProgress.Text = "0 / " + allFiles.Count().ToString();
+            completedFiles = 0;
+            allFilesInt = 0;
 
-            if (allFiles.Count() == 0)
+            string[] allFiles = Directory.GetFiles(path);
+
+            for (int i = 0; i < allFiles.Count(); i++)
+            {
+                string fileExt = new FileInfo(allFiles[i]).Extension;
+
+                if (fileExt != ".encrypted")
+                {
+                    allFilesInt++;
+                }
+            }
+
+            fileProgress.Text = string.Format("{0} / {1}", completedFiles, allFilesInt);
+
+            if (allFilesInt == 0)
             {
                 LogAppend("No files found.");
                 Gui(true);
@@ -177,7 +214,7 @@ namespace AesFileEncryption
                 string fileName = new FileInfo(file).Name;
                 string fileExt = new FileInfo(file).Extension;
 
-                if (fileExt == ".encrypted" && i == allFiles.Count() - 1)
+                if (fileExt == ".encrypted" && i == allFilesInt - 1)
                 {
                     LogAppend("No suitable files found.");
                     Gui(true);
@@ -194,7 +231,7 @@ namespace AesFileEncryption
                     {
                         Application.DoEvents();
 
-                        if (bgWorker.IsBusy == false)
+                        if (!bgWorker.IsBusy)
                         {
                             LogAppend(string.Format("Encrypting file {0}...", fileName));
                             bgWorker.RunWorkerAsync(args);
@@ -202,7 +239,7 @@ namespace AesFileEncryption
                         }
                     }
                 }
-                else if (bgWorker.IsBusy == false)
+                else if (!bgWorker.IsBusy)
                 {
                     LogAppend(string.Format("Encrypting file {0}...", fileName));
                     bgWorker.RunWorkerAsync(args);
@@ -214,10 +251,24 @@ namespace AesFileEncryption
         {
             Gui(false);
 
-            string[] allFiles = Directory.GetFiles(path);
-            fileProgress.Text = "0 / " + allFiles.Count().ToString();
+            completedFiles = 0;
+            allFilesInt = 0;
 
-            if (allFiles.Count() == 0)
+            string[] allFiles = Directory.GetFiles(path);
+
+            for (int i = 0; i < allFiles.Count(); i++)
+            {
+                string fileExt = new FileInfo(allFiles[i]).Extension;
+
+                if (fileExt == ".encrypted")
+                {
+                    allFilesInt++;
+                }
+            }
+
+            fileProgress.Text = string.Format("{0} / {1}", completedFiles, allFilesInt);
+
+            if (allFilesInt == 0)
             {
                 LogAppend("No files found.");
                 Gui(true);
@@ -235,7 +286,7 @@ namespace AesFileEncryption
                 string fileExt = new FileInfo(file).Extension;
                 string fileName = new FileInfo(file).Name;
 
-                if (fileExt != ".encrypted" && i == allFiles.Count() - 1)
+                if (fileExt != ".encrypted" && i == allFilesInt - 1)
                 {
                     LogAppend("No suitable files found.");
                     Gui(true);
@@ -252,7 +303,7 @@ namespace AesFileEncryption
                     {
                         Application.DoEvents();
 
-                        if (bgWorker.IsBusy == false)
+                        if (!bgWorker.IsBusy)
                         {
                             LogAppend(string.Format("Decrypting file {0}...", fileName));
                             bgWorker.RunWorkerAsync(args);
@@ -260,7 +311,7 @@ namespace AesFileEncryption
                         }
                     }
                 }
-                else if (bgWorker.IsBusy == false)
+                else if (!bgWorker.IsBusy)
                 {
                     LogAppend(string.Format("Decrypting file {0}...", fileName));
                     bgWorker.RunWorkerAsync(args);
@@ -290,14 +341,19 @@ namespace AesFileEncryption
 
             pathTxt.Text = string.Empty;
             pwdTxt.Text = string.Empty;
+
             encDecGb.Enabled = false;
             IsFolder.Checked = false;
+
             percentLabel.Text = "0 %";
-            fileProgress.Text = "0 / 0";
             progressBar.Value = 0;
 
+            completedFiles = 0;
+            allFilesInt = 0;
+            fileProgress.Text = string.Format("{0} / {1}", completedFiles, allFilesInt);
+
             log.Clear();
-            log.AppendText("Select path to the file or folder.\n");
+            LogAppend("Select path to the file or folder.");
         }
 
         private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -341,34 +397,28 @@ namespace AesFileEncryption
 
             if (progressBar.Value == 100)
             {
-                MatchCollection matches = Regex.Matches(fileProgress.Text, @"\d+");
-                int allFiles = int.Parse(matches[1].ToString());
-
-                int fileCount = int.Parse(matches[0].ToString());
-                fileCount++;
-
-                fileProgress.Text = string.Format("{0} / {1}", fileCount.ToString(), allFiles.ToString());
+                completedFiles++;
+                fileProgress.Text = string.Format("{0} / {1}", completedFiles, allFilesInt);
             }
         }
 
         private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            string[] results = (string[])e.Result;
+            string filePath = results[0];
+            string mode = results[1];
+
+            if (e.Error == null && progressBar.Value == 100 && completedFiles == allFilesInt)
+            {
+                Gui(true);
+            }
             if (e.Error == null && progressBar.Value == 100)
             {
-                string[] results = (string[])e.Result;
-                string filePath = results[0];
-                string mode = results[1];
-
                 string fileName = new FileInfo(filePath).Name;
                 LogAppend(string.Format("Successfully {0}ed file {1}!", mode, fileName));
 
-                MatchCollection matches = Regex.Matches(fileProgress.Text, @"\d+");
-                int fileCount = int.Parse(matches[0].ToString());
-                int allFiles = int.Parse(matches[1].ToString());
-
-                if (fileCount == allFiles)
+                if (completedFiles == allFilesInt)
                 {
-                    Gui(true);
                     SystemSounds.Asterisk.Play();
                 }
             }

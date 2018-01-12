@@ -51,10 +51,13 @@ namespace AesFileEncryption
                             byte[] buffer = new byte[4096];
                             int read;
 
+                            // readStream fills the buffer variable with bytes from the file.
+                            // encryptStream encrypts the buffer bytes and then writes them to the file.
                             while ((read = readStream.Read(buffer, 0, buffer.Length)) > 0)
                             {
                                 encryptStream.Write(buffer, 0, read);
 
+                                // This code is just calculating the progress and then reporting that back to the backgroundworker.
                                 double value = ((read / (double)fileSize) * 100);
 
                                 if (value == 100 && bgw != null)
@@ -81,6 +84,7 @@ namespace AesFileEncryption
                             byte[] keyHashBytes = sha2.ComputeHash(keyBytes);
                             byte[] hmacBytes = new byte[32];
 
+                            // This part will generate HMAC bytes.
                             using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
                             {
                                 fileStream.Position = 0;
@@ -91,6 +95,7 @@ namespace AesFileEncryption
                                 fileStream.Close();
                             }
 
+                            // This stream will append saltBytes, ivBytes, keyHashBytes and hmacBytes to end of the file.
                             using (FileStream appendStream = new FileStream(path, FileMode.Append, FileAccess.Write))
                             {
                                 appendStream.Write(saltBytes, 0, saltBytes.Length);
@@ -123,6 +128,7 @@ namespace AesFileEncryption
                 byte[] saltBytes = new byte[keysize / 8];
                 byte[] ivBytes = new byte[keysize / 8];
 
+                // readFileStream will read saltBytes and ivBytes from end of the file.
                 using (FileStream readFileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
                 {
                     readFileStream.Position = readFileStream.Length - ((keysize / 8) * 2 + 64);
@@ -142,6 +148,7 @@ namespace AesFileEncryption
                     byte[] hashKeyBytes = sha2.ComputeHash(keyBytes);
                     byte[] hashKeyBytes2 = new byte[32];
 
+                    // readHashStream will read hashed key bytes from end of the file.
                     using (FileStream readHashStream = new FileStream(path, FileMode.Open, FileAccess.Read))
                     {
                         readHashStream.Position = readHashStream.Length - 64;
@@ -150,17 +157,19 @@ namespace AesFileEncryption
                         readHashStream.Close();
                     }
 
+                    // Compare both hashed keys.
                     if (!Enumerable.SequenceEqual(hashKeyBytes, hashKeyBytes2))
                     {
                         MessageBox.Show("File is corrupted or password is incorrect!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
-
+                    
                     byte[] hmacBytes = new byte[32];
                     byte[] hmacBytes2 = new byte[32];
 
                     using (FileStream hmacStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite))
                     {
+                        // hmacStream will read HMAC bytes from end of the file.
                         hmacStream.Position = hmacStream.Length - 32;
                         hmacStream.Read(hmacBytes2, 0, hmacBytes2.Length);
 
@@ -173,8 +182,10 @@ namespace AesFileEncryption
                         hmacStream.Close();
                     }
 
+                    // Compare both HMAC byte arrays.
                     if (!Enumerable.SequenceEqual(hmacBytes, hmacBytes2))
                     {
+                        // Append hashKeyBytes2 and hmacBytes2 back to the file.
                         using (FileStream appendStream = new FileStream(path, FileMode.Append, FileAccess.Write))
                         {
                             appendStream.Write(hashKeyBytes2, 0, hashKeyBytes2.Length);
@@ -208,10 +219,13 @@ namespace AesFileEncryption
                             byte[] buffer = new byte[4096];
                             int read;
 
+                            // readStream fills the buffer variable with bytes from the file.
+                            // decryptStream decrypts the buffer bytes and then writes them to the file.
                             while ((read = decryptStream.Read(buffer, 0, buffer.Length)) > 0)
                             {
                                 outputStream.Write(buffer, 0, read);
 
+                                // This code is just calculating the progress and then reporting that back to the backgroundworker.
                                 double value = ((read / (double)fileSize) * 100);
 
                                 if (value == 100 && bgw != null)
@@ -233,6 +247,7 @@ namespace AesFileEncryption
                             decryptStream.Close();
                             inputStream.Close();
 
+                            // Append saltBytes, ivBytes, hashKeyBytes2 and hmacBytes2 back to the file.
                             using (FileStream appendStream = new FileStream(path, FileMode.Append, FileAccess.Write))
                             {
                                 appendStream.Write(saltBytes, 0, saltBytes.Length);
