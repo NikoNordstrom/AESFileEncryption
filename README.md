@@ -1,5 +1,5 @@
 # AESFileEncryption
-C# windows forms application for encrypting/decrypting files with AES-256.
+C# windows forms application for encrypting/decrypting files using AES-256.
 
 ## Features
 * Files are encrypted using AES-256.
